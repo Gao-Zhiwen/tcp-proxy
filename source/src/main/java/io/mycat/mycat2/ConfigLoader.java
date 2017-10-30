@@ -1,7 +1,6 @@
 package io.mycat.mycat2;
 
 import io.mycat.mycat2.beans.GlobalBean;
-import io.mycat.mycat2.sqlannotations.AnnotationProcessor;
 import io.mycat.proxy.ConfigEnum;
 import io.mycat.proxy.Configurable;
 import io.mycat.proxy.ProxyRuntime;
@@ -42,10 +41,13 @@ public class ConfigLoader {
         loadConfig(ConfigEnum.REPLICA_INDEX, GlobalBean.INIT_VERSION);
         loadConfig(ConfigEnum.DATASOURCE, GlobalBean.INIT_VERSION);
         loadConfig(ConfigEnum.SCHEMA, GlobalBean.INIT_VERSION);
+        // 加载动态注解配置
+        loadConfig(ConfigEnum.ACTION, GlobalBean.INIT_VERSION);
+        loadConfig(ConfigEnum.ANNOTATION, GlobalBean.INIT_VERSION);
 
         // 清空prepare文件夹
         YamlUtil.clearDirectory(DIR_PREPARE, null);
-        AnnotationProcessor.getInstance();//强制初始化动态注解
+//        AnnotationProcessor.getInstance(); //强制初始化动态注解
     }
 
     /**

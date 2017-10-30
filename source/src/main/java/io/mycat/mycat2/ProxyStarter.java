@@ -2,6 +2,7 @@ package io.mycat.mycat2;
 
 import java.io.IOException;
 
+import io.mycat.mycat2.annotation.AnnotationProcessor;
 import io.mycat.mycat2.beans.GlobalBean;
 import io.mycat.mycat2.beans.conf.*;
 import io.mycat.proxy.*;
@@ -80,6 +81,7 @@ public class ProxyStarter {
 			// 加载配置文件信息
 			ConfigLoader.INSTANCE.loadAll();
 
+			AnnotationProcessor.INSTANCE.init();
 			ProxyRuntime.INSTANCE.getConfig().initRepMap();
 			ProxyRuntime.INSTANCE.getConfig().initSchemaMap();
 

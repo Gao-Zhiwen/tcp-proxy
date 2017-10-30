@@ -1,0 +1,20 @@
+annotations:
+  enable: true
+  actions:
+    block:
+      createTableAllow: {skip: false, enable: true}
+    around:
+      monitorSQL: {skip: false}
+  schemas:
+    - name: test
+      actions:
+        createTableAllow: {skip: false, enable: false}
+      matches:
+        - name: select有条件多个tables
+          enable: true
+          sqlType: SELECT
+          where:
+            AND: id = ?
+          tables: [test1, test2]
+          actions:
+            cacheResult: {cache_time: 1800, access_count: 70}

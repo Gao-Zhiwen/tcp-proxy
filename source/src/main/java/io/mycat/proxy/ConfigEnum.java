@@ -19,7 +19,9 @@ public enum ConfigEnum {
     DATASOURCE(6, "datasource.yml", DatasourceConfig.class),
     REPLICA_INDEX(7, "replica-index.yml", ReplicaIndexConfig.class),
     SCHEMA(8, "schema.yml", SchemaConfig.class),
-    SHARDING_RULE(9, "sharding-rule.yml", ShardingRuleConfig.class);
+    SHARDING_RULE(9, "sharding-rule.yml", ShardingRuleConfig.class),
+    ACTION(10, "actions-bak.yml", ActionConfig.class),
+    ANNOTATION(11, "annotations-bak.yml", AnnotationConfig.class);
 
     private byte type;
     private String fileName;
