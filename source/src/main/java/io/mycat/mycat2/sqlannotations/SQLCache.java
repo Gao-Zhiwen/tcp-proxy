@@ -3,16 +3,14 @@ package io.mycat.mycat2.sqlannotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.mycat.mycat2.MySQLCommand;
 import io.mycat.mycat2.MycatSession;
 import io.mycat.mycat2.cmds.interceptor.SQLAnnotationChain;
-import io.mycat.mycat2.cmds.interceptor.SQLCachCmd;
 
-public class SQLCach extends SQLAnnotation {
+public class SQLCache extends SQLAnnotation {
 
-	public static final SQLCach INSTANCE = new SQLCach();
+	public static final SQLCache INSTANCE = new SQLCache();
 	
-	private static final Logger logger = LoggerFactory.getLogger(SQLCach.class);
+	private static final Logger logger = LoggerFactory.getLogger(SQLCache.class);
 		
 	/**
 	 * 组装 mysqlCommand

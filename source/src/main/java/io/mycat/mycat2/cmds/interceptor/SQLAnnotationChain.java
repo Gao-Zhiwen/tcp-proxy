@@ -84,7 +84,6 @@ public class SQLAnnotationChain {
 	 * @return
 	 */
 	public MySQLCommand build(){
-		
 		if(queueMap.isEmpty()){
 			return target;
 		}

@@ -1,5 +1,7 @@
 package io.mycat.mycat2.beans.conf;
 
+import java.util.Arrays;
+
 /**
  * Desc:
  *
@@ -7,8 +9,7 @@ package io.mycat.mycat2.beans.conf;
  * @author: gaul
  */
 public class AnnotationBean {
-    private boolean enable;
-    private String[] allow;
+    private boolean enable = true;
     private AnnotationSchemaBean[] schemas;
 
     public boolean isEnable() {
@@ -19,19 +20,17 @@ public class AnnotationBean {
         this.enable = enable;
     }
 
-    public String[] getAllow() {
-        return allow;
-    }
-
-    public void setAllow(String[] allow) {
-        this.allow = allow;
-    }
-
     public AnnotationSchemaBean[] getSchemas() {
         return schemas;
     }
 
     public void setSchemas(AnnotationSchemaBean[] schemas) {
         this.schemas = schemas;
+    }
+
+    @Override
+    public String toString() {
+        return "AnnotationBean{" + "enable=" + enable + ", schemas=" + Arrays.toString(schemas)
+                + '}';
     }
 }

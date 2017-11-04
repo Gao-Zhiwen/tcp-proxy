@@ -1,20 +1,21 @@
 annotations:
-  enable: true
-  actions:
-    block:
-      createTableAllow: {skip: false, enable: true}
-    around:
-      monitorSQL: {skip: false}
+  enable: true                    # 表示是否支持动态注解，true表示开启，false表示关闭
   schemas:
-    - name: test
-      actions:
-        createTableAllow: {skip: false, enable: false}
-      matches:
+    - name: test                  # 对应schema的名字
+      enable: true                # 表示对于该schema开启动态注解
+      blocks:                     # 设置schema级别的拦截类配置，不设置则使用默认值
+        deleteAllow: false
+      filters:                    # 设置schema级别的环绕类参数配置，不设置则使用默认值
+        - name: cacheResult
+          param: {cache_time: 1800, access_count: 70}
+      matches:                    # 对sql做匹配
         - name: select有条件多个tables
           enable: true
           sqlType: SELECT
-          where:
+          conditions:
             AND: id = ?
+            OR: name = ?
           tables: [test1, test2]
-          actions:
-            cacheResult: {cache_time: 1800, access_count: 70}
+          filters:                # request级别的环绕类参数配置
+            - name: cacheResult
+              param: {cache_time: 1000, access_count: 100}

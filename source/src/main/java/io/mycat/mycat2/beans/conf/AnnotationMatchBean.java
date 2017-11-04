@@ -1,5 +1,6 @@
 package io.mycat.mycat2.beans.conf;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -20,9 +21,9 @@ public class AnnotationMatchBean {
     private String name;
     private boolean enable;
     private SqlTypeEnum sqlType;
-    private Map<ConditionEnum, String> where;
+    private Map<ConditionEnum, String> conditions;
     private String[] tables;
-    private Map<String, Map<String, String>> actions;
+    private FilterBean[] filters;
 
     public String getName() {
         return name;
@@ -48,12 +49,12 @@ public class AnnotationMatchBean {
         this.sqlType = sqlType;
     }
 
-    public Map<ConditionEnum, String> getWhere() {
-        return where;
+    public Map<ConditionEnum, String> getConditions() {
+        return conditions;
     }
 
-    public void setWhere(Map<ConditionEnum, String> where) {
-        this.where = where;
+    public void setConditions(Map<ConditionEnum, String> conditions) {
+        this.conditions = conditions;
     }
 
     public String[] getTables() {
@@ -64,11 +65,18 @@ public class AnnotationMatchBean {
         this.tables = tables;
     }
 
-    public Map<String, Map<String, String>> getActions() {
-        return actions;
+    public FilterBean[] getFilters() {
+        return filters;
     }
 
-    public void setActions(Map<String, Map<String, String>> actions) {
-        this.actions = actions;
+    public void setFilters(FilterBean[] filters) {
+        this.filters = filters;
+    }
+
+    @Override
+    public String toString() {
+        return "AnnotationMatchBean{" + "name='" + name + '\'' + ", enable=" + enable + ", sqlType="
+                + sqlType + ", conditions=" + conditions + ", tables=" + Arrays.toString(tables)
+                + ", filters=" + Arrays.toString(filters) + '}';
     }
 }

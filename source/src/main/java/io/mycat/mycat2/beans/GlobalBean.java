@@ -30,4 +30,6 @@ public class GlobalBean {
     public static final int INIT_VERSION = 1;
     // 默认的重试次数
     public static final int MAX_RETRY_COUNT = 5;
+
+    public static final String ANNOTATION_BLOCK_ERR_MSG = "blockErrMsg";
 }

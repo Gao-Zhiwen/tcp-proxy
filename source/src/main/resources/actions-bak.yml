@@ -1,16 +1,10 @@
-actions:
-  block:
-    blacklist: io.mycat.mycat2.sqlannotations.Blacklist
-    tableCheck: io.mycat.mycat2.sqlannotations.TableCheck
-    selelctAllow: io.mycat.mycat2.sqlannotations.blackList.SelelctAllow
-    deleteAllow: io.mycat.mycat2.sqlannotations.blackList.DeleteAllow
-    dropAllow: io.mycat.mycat2.sqlannotations.blackList.DropAllow
-    alterAllow: io.mycat.mycat2.sqlannotations.blackList.AlterAllow
-    truncateAllow: io.mycat.mycat2.sqlannotations.blackList.TruncateAllow
-    insertAllow: io.mycat.mycat2.sqlannotations.blackList.InsertAllow
-    updateAllow: io.mycat.mycat2.sqlannotations.blackList.UpdateAllow
-    replaceAllow: io.mycat.mycat2.sqlannotations.blackList.ReplaceAllow
-    createTableAllow: io.mycat.mycat2.sqlannotations.blackList.CreateTableAllow
-  around:
-    monitorSQL: io.mycat.mycat2.sqlannotations.MonintorSQL
-    cacheResult: io.mycat.mycat2.sqlannotations.CacheResult
+actions: # 配置动态注解全局默认参数
+  blocks:  # block表示拦截类
+    - name: selectAllow
+      className: io.mycat.mycat2.annotation.block.SelectAllow
+      value: true # 表示默认禁止该行为，如果不配置defaultValue，默认为true，可以在annotation.yml中配置来替换
+    - name: deleteAllow
+      className: io.mycat.mycat2.annotation.block.DeleteAllow
+  filters:  # filter表示环绕类
+    - name: monitorSQL
+      className: io.mycat.mycat2.annotation.filter.MonintorSQL

@@ -81,20 +81,22 @@ public class MycatSession extends AbstractMySQLSession {
 	 * 获取sql 类型
 	 * @return
 	 */
-	public void matchMySqlCommand(){
+	public boolean matchMySqlCommand() throws IOException {
+		boolean result = true;
 		switch(schema.schemaType){
 			case DB_IN_ONE_SERVER:
-				DBInOneServerCmdStrategy.INSTANCE.matchMySqlCommand(this);
+				result = DBInOneServerCmdStrategy.INSTANCE.matchMySqlCommand(this);
 				break;
 			case DB_IN_MULTI_SERVER:
-				DBINMultiServerCmdStrategy.INSTANCE.matchMySqlCommand(this);
+				result = DBINMultiServerCmdStrategy.INSTANCE.matchMySqlCommand(this);
 			case ANNOTATION_ROUTE:
-				AnnotateRouteCmdStrategy.INSTANCE.matchMySqlCommand(this);
+				result = AnnotateRouteCmdStrategy.INSTANCE.matchMySqlCommand(this);
 //			case SQL_PARSE_ROUTE:
-//				AnnotateRouteCmdStrategy.INSTANCE.matchMySqlCommand(this);
+//				result = AnnotateRouteCmdStrategy.INSTANCE.matchMySqlCommand(this);
 			default:
 				throw new InvalidParameterException("schema type is invalid ");
 		}
+		return result;
 	}
 
 	public MycatSession(BufferPool bufPool, Selector nioSelector, SocketChannel frontChannel) throws IOException {

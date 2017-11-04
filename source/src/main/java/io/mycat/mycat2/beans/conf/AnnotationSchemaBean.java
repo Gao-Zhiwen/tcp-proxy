@@ -1,5 +1,8 @@
 package io.mycat.mycat2.beans.conf;
 
+import java.util.Arrays;
+import java.util.Map;
+
 /**
  * Desc:
  *
@@ -8,7 +11,9 @@ package io.mycat.mycat2.beans.conf;
  */
 public class AnnotationSchemaBean {
     private String name;
-    private String[] allow;
+    private boolean enable = true;
+    private Map<String, String> blocks;
+    private FilterBean[] filters;
     private AnnotationMatchBean[] matches;
 
     public String getName() {
@@ -19,12 +24,28 @@ public class AnnotationSchemaBean {
         this.name = name;
     }
 
-    public String[] getAllow() {
-        return allow;
+    public boolean isEnable() {
+        return enable;
     }
 
-    public void setAllow(String[] allow) {
-        this.allow = allow;
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
+
+    public Map<String, String> getBlocks() {
+        return blocks;
+    }
+
+    public void setBlocks(Map<String, String> blocks) {
+        this.blocks = blocks;
+    }
+
+    public FilterBean[] getFilters() {
+        return filters;
+    }
+
+    public void setFilters(FilterBean[] filters) {
+        this.filters = filters;
     }
 
     public AnnotationMatchBean[] getMatches() {
@@ -33,5 +54,12 @@ public class AnnotationSchemaBean {
 
     public void setMatches(AnnotationMatchBean[] matches) {
         this.matches = matches;
+    }
+
+    @Override
+    public String toString() {
+        return "AnnotationSchemaBean{" + "name='" + name + ", enable=" + enable + ", blocks="
+                + blocks + ", filters=" + Arrays.toString(filters) + ", matches="
+                + Arrays.toString(matches) + '}';
     }
 }

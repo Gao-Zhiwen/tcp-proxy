@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 
+import io.mycat.mycat2.annotation.AnnotationProcessor;
+import io.mycat.mycat2.beans.GlobalBean;
+import io.mycat.mysql.packet.ErrorPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +52,12 @@ public class DefaultMycatSessionHandler implements NIOHandler<AbstractMySQLSessi
 			logger.warn("front contains multi package ");
 		}
 	    
-		session.matchMySqlCommand();
+		if (!session.matchMySqlCommand()) {
+			return;
+		}
 
 		// 如果当前包需要处理，则交给对应方法处理，否则直接透传
-		if(session.curSQLCommand.procssSQL(session)){
+		if (session.curSQLCommand.procssSQL(session)) {
 			session.curSQLCommand.clearFrontResouces(session, session.isClosed());
 		}
 	}

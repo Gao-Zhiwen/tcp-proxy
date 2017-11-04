@@ -2,8 +2,6 @@ package io.mycat.mycat2.beans.conf;
 
 import io.mycat.proxy.Configurable;
 
-import java.util.Map;
-
 /**
  * Desc: 对应action.yml文件，用于动态注解的处理类定义
  *
@@ -11,13 +9,18 @@ import java.util.Map;
  * @author: gaul
  */
 public class ActionConfig implements Configurable {
-    private Map<String, String> actions;
+    private ActionBean actions;
 
-    public Map<String, String> getActions() {
+    public ActionBean getActions() {
         return actions;
     }
 
-    public void setActions(Map<String, String> actions) {
+    public void setActions(ActionBean actions) {
         this.actions = actions;
+    }
+
+    @Override
+    public String toString() {
+        return "ActionConfig{" + "actions=" + actions + '}';
     }
 }

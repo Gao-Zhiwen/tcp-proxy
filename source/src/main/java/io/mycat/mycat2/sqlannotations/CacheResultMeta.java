@@ -1,7 +1,7 @@
 package io.mycat.mycat2.sqlannotations;
 
 import io.mycat.mycat2.cmds.interceptor.SQLAnnotationCmd;
-import io.mycat.mycat2.cmds.interceptor.SQLCachCmd;
+import io.mycat.mycat2.cmds.interceptor.SQLCacheCmd;
 
 public class CacheResultMeta implements SQLAnnotationMeta {
 	
@@ -38,6 +38,6 @@ public class CacheResultMeta implements SQLAnnotationMeta {
 
 	@Override
 	public SQLAnnotationCmd getSQLAnnotationCmd() {
-		return new SQLCachCmd();
+		return new SQLCacheCmd();
 	}
 }
