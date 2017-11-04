@@ -234,6 +234,9 @@ public class MycatSession extends AbstractMySQLSession {
 		backend.useSharedBuffer(this.proxyBuffer);
 		backend.setCurNIOHandler(this.getCurNIOHandler());
 		backend.getSessionAttrMap().put(SessionKeyEnum.SESSION_KEY_CONN_IDLE_FLAG.getKey(), false);
+		logger.debug(" {} bind backConnection  for {}",
+				this,
+				backend.toString());
 	}
 
 	/**
@@ -432,7 +435,7 @@ public class MycatSession extends AbstractMySQLSession {
 		//1. 当前正在使用的 backend
 		// 当前连接如果本次不被使用,会被自动放入 currSessionMap 中
 		if (curBackend != null
-				&& canUseforCurrent(curBackend,targetMetaBean,runOnSlave)){
+				&& canUseforCurrent(curBackend,targetMetaBean,runOnSlave) && curBackend.isIDLE()){
 			logger.debug("Using cached backend connections for {}。{}"
 						,(runOnSlave ? "read" : "write"),
 						curBackend);
@@ -499,10 +502,7 @@ public class MycatSession extends AbstractMySQLSession {
 			return null;
 		}
 		
-		return backendList.stream().filter(f -> {
-				Boolean flag = (Boolean) f.getSessionAttrMap().get(SessionKeyEnum.SESSION_KEY_CONN_IDLE_FLAG.getKey());
-				return (flag == null) ? false : flag;
-			})
+		return backendList.stream().filter(f -> f.isIDLE())
 			.findFirst()
 			.orElse(null);
 	}
@@ -529,8 +529,9 @@ public class MycatSession extends AbstractMySQLSession {
 				}
 				
 				if (isOnlyIdle) {
-					Boolean flag = (Boolean) f.getSessionAttrMap().get(SessionKeyEnum.SESSION_KEY_CONN_IDLE_FLAG.getKey());
-					return (flag == null) ? false : flag;
+					return f.isIDLE();
+//					Boolean flag = (Boolean) f.getSessionAttrMap().get(SessionKeyEnum.SESSION_KEY_CONN_IDLE_FLAG.getKey());
+//					return (flag == null) ? false : flag;
 				}
 				return true;
 			})
