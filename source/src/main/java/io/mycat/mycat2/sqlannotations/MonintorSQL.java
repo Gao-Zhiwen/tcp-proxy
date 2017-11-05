@@ -1,11 +1,11 @@
 package io.mycat.mycat2.sqlannotations;
 
+import io.mycat.mycat2.annotation.SQLAnnotationChain;
+import io.mycat.mycat2.annotation.filter.SQLAnnotationCmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.mycat.mycat2.MycatSession;
-import io.mycat.mycat2.cmds.interceptor.SQLAnnotationChain;
-import io.mycat.mycat2.cmds.interceptor.SQLAnnotationCmd;
 
 
 /**
@@ -27,7 +27,7 @@ public class MonintorSQL extends SQLAnnotation {
 		MonintorSQLMeta meta = (MonintorSQLMeta) getSqlAnnoMeta();
 		SQLAnnotationCmd cmd = meta.getSQLAnnotationCmd();
 		cmd.setSqlAnnotationChain(chain);
-		chain.addCmdChain(this,cmd);
+//		chain.addCmdChain(this,cmd);// todo
 		return true;
 	}
 

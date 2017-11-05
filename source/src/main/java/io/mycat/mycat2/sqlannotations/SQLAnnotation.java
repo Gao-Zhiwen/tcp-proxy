@@ -1,7 +1,7 @@
 package io.mycat.mycat2.sqlannotations;
 
 import io.mycat.mycat2.MycatSession;
-import io.mycat.mycat2.cmds.interceptor.SQLAnnotationChain;
+import io.mycat.mycat2.annotation.SQLAnnotationChain;
 import io.mycat.mycat2.sqlparser.byteArrayInterface.dynamicAnnotation.impl.ActonFactory;
 
 /**

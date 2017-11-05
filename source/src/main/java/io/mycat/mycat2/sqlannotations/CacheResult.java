@@ -2,12 +2,12 @@ package io.mycat.mycat2.sqlannotations;
 
 import java.util.Map;
 
+import io.mycat.mycat2.annotation.SQLAnnotationChain;
+import io.mycat.mycat2.annotation.filter.SQLAnnotationCmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.mycat.mycat2.MycatSession;
-import io.mycat.mycat2.cmds.interceptor.SQLAnnotationChain;
-import io.mycat.mycat2.cmds.interceptor.SQLAnnotationCmd;
 import io.mycat.mycat2.sqlparser.BufferSQLContext;
 
 /**
@@ -26,7 +26,7 @@ public class CacheResult extends SQLAnnotation {
 		
 		SQLAnnotationCmd cmd = meta.getSQLAnnotationCmd();
 		cmd.setSqlAnnotationChain(chain);
-		chain.addCmdChain(this,cmd);
+//		chain.addCmdChain(this,cmd); //todo
 		
 		BufferSQLContext context = session.sqlContext;
 		context.setAnnotationType(BufferSQLContext.ANNOTATION_SQL_CACHE);

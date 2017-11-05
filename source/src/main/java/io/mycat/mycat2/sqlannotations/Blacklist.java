@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import io.mycat.mycat2.annotation.SQLAnnotationChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.mycat.mycat2.MycatSession;
-import io.mycat.mycat2.cmds.interceptor.SQLAnnotationChain;
 import io.mycat.mycat2.sqlparser.byteArrayInterface.dynamicAnnotation.impl.ConditionUtil;
 
 /**

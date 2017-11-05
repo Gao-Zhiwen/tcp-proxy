@@ -1,7 +1,7 @@
 package io.mycat.mycat2.sqlannotations;
 
-import io.mycat.mycat2.cmds.interceptor.SQLAnnotationCmd;
-import io.mycat.mycat2.cmds.interceptor.SQLCacheCmd;
+import io.mycat.mycat2.annotation.filter.SQLAnnotationCmd;
+import io.mycat.mycat2.annotation.filter.SQLCacheCmd;
 
 public class CacheResultMeta implements SQLAnnotationMeta {
 	

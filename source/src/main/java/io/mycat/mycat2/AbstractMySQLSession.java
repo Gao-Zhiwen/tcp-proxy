@@ -5,18 +5,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import io.mycat.mycat2.beans.MySQLCharset;
 import io.mycat.mycat2.beans.MySQLPackageInf;
-import io.mycat.mycat2.sqlannotations.AnnotationProcessor;
-import io.mycat.mycat2.sqlannotations.SQLAnnotation;
-import io.mycat.mycat2.sqlparser.BufferSQLContext;
 import io.mycat.mysql.AutoCommit;
 import io.mycat.mysql.Isolation;
 import io.mycat.mysql.packet.MySQLPacket;

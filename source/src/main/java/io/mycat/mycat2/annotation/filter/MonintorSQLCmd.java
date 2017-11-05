@@ -1,7 +1,7 @@
 package io.mycat.mycat2.annotation.filter;
 
 import io.mycat.mycat2.MycatSession;
-import io.mycat.mycat2.cmds.interceptor.SQLAnnotationCmd;
+import io.mycat.mycat2.sqlannotations.MonintorSQL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,9 +13,9 @@ import java.io.IOException;
  * @author yanjunli
  *
  */
-public class MonintorSQL extends SQLAnnotationCmd {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MonintorSQL.class);
-    public static final MonintorSQL INSTANCE = new MonintorSQL();
+public class MonintorSQLCmd extends SQLAnnotationCmd {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MonintorSQLCmd.class);
+    public static final MonintorSQLCmd INSTANCE = new MonintorSQLCmd();
 
     @Override
     public boolean procssSQL(MycatSession session) throws IOException {

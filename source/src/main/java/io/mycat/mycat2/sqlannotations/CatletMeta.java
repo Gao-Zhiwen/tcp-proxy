@@ -1,7 +1,8 @@
 package io.mycat.mycat2.sqlannotations;
 
-import io.mycat.mycat2.cmds.interceptor.CatletCmd;
-import io.mycat.mycat2.cmds.interceptor.SQLAnnotationCmd;
+
+import io.mycat.mycat2.annotation.filter.CatletCmd;
+import io.mycat.mycat2.annotation.filter.SQLAnnotationCmd;
 
 public class CatletMeta implements SQLAnnotationMeta {
 	

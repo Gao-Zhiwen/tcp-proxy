@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 
-import io.mycat.mycat2.annotation.AnnotationProcessor;
-import io.mycat.mycat2.beans.GlobalBean;
-import io.mycat.mysql.packet.ErrorPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

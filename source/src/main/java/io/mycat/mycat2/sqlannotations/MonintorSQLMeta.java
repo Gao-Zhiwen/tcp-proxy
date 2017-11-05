@@ -1,13 +1,14 @@
 package io.mycat.mycat2.sqlannotations;
 
-import io.mycat.mycat2.cmds.interceptor.MonitorSQLCmd;
-import io.mycat.mycat2.cmds.interceptor.SQLAnnotationCmd;
+
+import io.mycat.mycat2.annotation.filter.MonintorSQLCmd;
+import io.mycat.mycat2.annotation.filter.SQLAnnotationCmd;
 
 public class MonintorSQLMeta implements SQLAnnotationMeta {
 
 	@Override
 	public SQLAnnotationCmd getSQLAnnotationCmd() {
-		return new MonitorSQLCmd();
+		return new MonintorSQLCmd();
 	}
 
 }

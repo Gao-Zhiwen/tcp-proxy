@@ -1,4 +1,4 @@
-annotations:
+annotations:                      # annotations.yml中配置的block和filter，必须在actions.yml中声明过，不然算配置错误
   enable: true                    # 表示是否支持动态注解，true表示开启，false表示关闭
   schemas:
     - name: test                  # 对应schema的名字

@@ -3,10 +3,13 @@ package io.mycat.mycat2.cmds.strategy;
 import io.mycat.mycat2.MySQLCommand;
 import io.mycat.mycat2.MycatSession;
 import io.mycat.mycat2.annotation.AnnotationProcessor;
+import io.mycat.mycat2.annotation.filter.CatletCmd;
+import io.mycat.mycat2.annotation.filter.SQLAnnotationCmd;
+import io.mycat.mycat2.annotation.filter.SQLCacheCmd;
 import io.mycat.mycat2.beans.GlobalBean;
 import io.mycat.mycat2.cmds.CmdStrategy;
 import io.mycat.mycat2.cmds.DirectPassthrouhCmd;
-import io.mycat.mycat2.cmds.interceptor.SQLAnnotationChain;
+import io.mycat.mycat2.annotation.SQLAnnotationChain;
 import io.mycat.mycat2.sqlannotations.CacheResult;
 import io.mycat.mycat2.sqlannotations.CacheResultMeta;
 import io.mycat.mycat2.sqlannotations.CatletMeta;
@@ -33,7 +36,8 @@ public abstract class AbstractCmdStrategy implements CmdStrategy {
      */
     protected Map<Byte, MySQLCommand> MYSQL_COMMAND_MAP = new HashMap<>();
 
-    private Map<Byte, SQLAnnotation> staticAnnontationMap = new HashMap<>();
+//    private Map<Byte, SQLAnnotation> staticAnnontationMap = new HashMap<>();
+    private Map<Byte, SQLAnnotationCmd> staticAnnontationMap = new HashMap<>();
 
     /**
      * sqlparser
@@ -47,15 +51,18 @@ public abstract class AbstractCmdStrategy implements CmdStrategy {
     }
 
     private void initStaticAnnotation() {
-        CacheResultMeta cacheResultMeta = new CacheResultMeta();
-        SQLAnnotation cacheResult = new CacheResult();
-        cacheResult.setSqlAnnoMeta(cacheResultMeta);
-        staticAnnontationMap.put(BufferSQLContext.ANNOTATION_SQL_CACHE, cacheResult);
+//        CacheResultMeta cacheResultMeta = new CacheResultMeta();
+//        SQLAnnotation cacheResult = new CacheResult();
+//        cacheResult.setSqlAnnoMeta(cacheResultMeta);
+//        staticAnnontationMap.put(BufferSQLContext.ANNOTATION_SQL_CACHE, cacheResult);
 
         //hbt静态注解
-        SQLAnnotation catlet = new CatletResult();
-        catlet.setSqlAnnoMeta(new CatletMeta());
-        staticAnnontationMap.put(BufferSQLContext.ANNOTATION_CATLET, catlet );
+//        SQLAnnotation catlet = new CatletResult();
+//        catlet.setSqlAnnoMeta(new CatletMeta());
+//        staticAnnontationMap.put(BufferSQLContext.ANNOTATION_CATLET, catlet);
+
+        staticAnnontationMap.put(BufferSQLContext.ANNOTATION_SQL, SQLCacheCmd.INSTANCE);
+        staticAnnontationMap.put(BufferSQLContext.ANNOTATION_CATLET, CatletCmd.INSTANCE);
     }
 
     protected abstract void initMyCmdHandler();
@@ -80,6 +87,7 @@ public abstract class AbstractCmdStrategy implements CmdStrategy {
         } else {
             command = MY_COMMAND_MAP.get((byte) session.curMSQLPackgInf.pkgType);
         }
+
         if (command == null) {
             command = DirectPassthrouhCmd.INSTANCE;
         }
@@ -95,12 +103,16 @@ public abstract class AbstractCmdStrategy implements CmdStrategy {
         }
 
         /**
-         * 设置原始处理命令 1. 设置目标命令 2. 处理动态注解 3. 处理静态注解 4. 构建命令或者注解链。 如果没有注解链，直接返回目标命令
+         * 设置原始处理命令
+         * 1. 设置目标命令
+         * 2. 组装动态注解
+         * 3. 组装静态注解
+         * 4. 构建命令或者注解链。 如果没有注解链，直接返回目标命令
          */
         SQLAnnotationChain chain = new SQLAnnotationChain();
         session.curSQLCommand = chain.setTarget(command)
-                .processDynamicAnno(session)
-                .processStaticAnno(session, staticAnnontationMap)
+                .buildDynamicAnno(session)
+                .buildStaticAnno(session, staticAnnontationMap)
                 .build();
         return true;
     }
