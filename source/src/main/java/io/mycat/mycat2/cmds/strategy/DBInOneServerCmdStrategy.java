@@ -69,6 +69,7 @@ public class DBInOneServerCmdStrategy extends AbstractCmdStrategy{
 		MYSQL_COMMAND_MAP.put(BufferSQLContext.START_SQL, SqlComStartCmd.INSTANCE);
 		MYSQL_COMMAND_MAP.put(BufferSQLContext.USE_SQL, SqlComStartCmd.INSTANCE);
 		MYSQL_COMMAND_MAP.put(BufferSQLContext.SHUTDOWN_SQL, SqlComShutdownCmd.INSTANCE);
+		// mycat管理命令
 		MYSQL_COMMAND_MAP.put(BufferSQLContext.MYCAT_SWITCH_REPL, MycatSwitchReplCmd.INSTANCE);
 		MYSQL_COMMAND_MAP.put(BufferSQLContext.MYCAT_SHOW_CONFIGS, MycatShowConfigsCmd.INSTANCE);
 	}

@@ -3,9 +3,11 @@ package io.mycat.mycat2.annotation;
 import io.mycat.mycat2.MycatConfig;
 import io.mycat.mycat2.MycatSession;
 import io.mycat.mycat2.annotation.block.BlockHandler;
+import io.mycat.mycat2.annotation.filter.SQLAnnotationCmd;
+import io.mycat.mycat2.beans.conf.ActionBean;
 import io.mycat.mycat2.beans.conf.ActionConfig;
 import io.mycat.mycat2.beans.conf.AnnotationConfig;
-import io.mycat.mycat2.annotation.filter.SQLAnnotationCmd;
+import io.mycat.mycat2.beans.conf.AnnotationMatchBean;
 import io.mycat.proxy.ConfigEnum;
 import io.mycat.proxy.ProxyRuntime;
 import org.slf4j.Logger;
@@ -52,12 +54,14 @@ public class AnnotationProcessor {
         ActionConfig actionConfig = config.getConfig(ConfigEnum.ACTION);
         AnnotationConfig annotationConfig = config.getConfig(ConfigEnum.ANNOTATION);
 
+        initInstanceCache(actionConfig);
+
         enable = annotationConfig.getAnnotations().isEnable();
         if (!enable) {
             return;
         }
 
-        initCache(actionConfig, annotationConfig);
+        initAnnotationCache(annotationConfig);
     }
 
     private void clearCache() {
@@ -71,62 +75,62 @@ public class AnnotationProcessor {
         schemaFilterCache.clear();
     }
 
+    private void initInstanceCache(ActionConfig actionConfig) {
+        ActionBean actionBean = actionConfig.getActions();
+        iterator(actionBean.getBlocks(), blockInstanceCache, BlockHandler.class);
+        iterator(actionBean.getFilters(), filterInstanceCache, SQLAnnotationCmd.class);
+    }
+
+    private <T> void iterator(Map<String, String> map, Map<String, T> cache, Class<T> t) {
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            try {
+                cache.put(entry.getKey(), (T) getInstance(entry.getValue()));
+            } catch (Exception e) {
+                LOGGER.error("error to instance for: {}", entry.getValue(), e);
+                throw new RuntimeException("instance error");
+            }
+        }
+    }
+
     /**
      * 初始化cache
      * 
-     * @param actionConfig
      * @param annotationConfig
      */
-    private void initCache(ActionConfig actionConfig, AnnotationConfig annotationConfig) {
-        // 设置全局block
-        Optional.ofNullable(actionConfig.getActions().getBlocks()).ifPresent(bean -> Stream.of(bean)
-//                .filter(block -> !"true".equals(block.getValue()))
-                .forEach(block -> {
-                    try {
-                        blockInstanceCache.put(block.getName(), (BlockHandler) getInstance(block.getClassName()));
-                        globalBlocksCache.put(block.getName(), block.getValue());
-                    } catch (Exception e) {
-                        LOGGER.error("error to get block instance for {}", block.getClassName(), e);
-                    }
-                }));
-
-        // 设置全局filter
-        Optional.ofNullable(actionConfig.getActions().getFilters())
-                .ifPresent(bean -> Stream.of(bean).forEach(filter -> {
-                    try {
-                        filterInstanceCache.put(filter.getName(), (SQLAnnotationCmd) getInstance(filter.getClassName()));
-                        globalFiltersCache.put(filter.getName(), filter.getParam());
-                    } catch (Exception e) {
-                        LOGGER.error("error to get filter instance for {}", filter.getClassName(), e);
-                    }
+    private void initAnnotationCache(AnnotationConfig annotationConfig) {
+        // 设置全局参数
+        Optional.ofNullable(annotationConfig.getAnnotations().getGlobal())
+                .ifPresent(bean -> Stream.of(bean).forEach(block -> {
+                    globalBlocksCache.putAll(block.getBlocks());
+                    globalFiltersCache.putAll(block.getFilters());
                 }));
 
         // 设置schema
-        Optional.ofNullable(annotationConfig.getAnnotations().getSchemas()).ifPresent(
-                bean -> Stream.of(bean).filter(schema -> schema.isEnable()).forEach(schema -> {
+        annotationConfig.getAnnotations().getSchemas().stream().filter(schema -> schema.isEnable())
+                .forEach(schema -> {
                     // 设置schema级别的block
                     schemaBlockCache.put(schema.getName(), new HashMap());
                     schemaBlockCache.get(schema.getName()).putAll(globalBlocksCache);
-                    Optional.ofNullable(schema.getBlocks()).ifPresent(blocks ->
-                        blocks.forEach((name, value) -> {
-                            if (blockInstanceCache.get(name) == null) {
-                                LOGGER.error("maybe error, please check annotations.yml");
-                            } else {
-                                schemaBlockCache.get(schema.getName()).put(name, value);
-                            }
-                        }));
+                    Optional.ofNullable(schema.getBlocks())
+                            .ifPresent(blocks -> blocks.forEach((name, value) -> {
+                                if (blockInstanceCache.get(name) == null) {
+                                    LOGGER.error("maybe error, please check annotations.yml");
+                                } else {
+                                    schemaBlockCache.get(schema.getName()).put(name, value);
+                                }
+                            }));
                     // 设置schema级别的filter
-                    schemaFilterCache.put(schema.getName(), new HashMap<>());
+                    schemaFilterCache.put(schema.getName(), new HashMap());
                     schemaFilterCache.get(schema.getName()).putAll(globalFiltersCache);
-                    Optional.ofNullable(schema.getFilters()).ifPresent(filters ->
-                        Stream.of(filters).forEach(filter -> {
-                            if (filterInstanceCache.get(filter.getName()) == null) {
-                                LOGGER.error("maybe error, please check annotations.yml");
-                            } else {
-                                schemaFilterCache.get(schema.getName()).put(filter.getName(), filter.getParam());
-                            }
-                        }));
-                }));
+                    Optional.ofNullable(schema.getFilters())
+                            .ifPresent(filters -> filters.forEach((name, value) -> {
+                                if (filterInstanceCache.get(name) == null) {
+                                    LOGGER.error("maybe error, please check annotations.yml");
+                                } else {
+                                    schemaFilterCache.get(schema.getName()).put(name, value);
+                                }
+                            }));
+                });
     }
 
     private Object getInstance(String className) throws Exception {
@@ -165,11 +169,63 @@ public class AnnotationProcessor {
     public void parseFilter(MycatSession session, SQLAnnotationChain chain) {
         Map<String, Map<String, String>> schemaMap = schemaFilterCache.get(session.schema.getName());
         Map<String, Map<String, String>> schemaFilters = schemaMap == null ? globalFiltersCache : schemaMap;
+
+        // 非空，表示存在该schema的annotation配置，需要做match匹配
+        if (schemaMap != null) {
+            AnnotationConfig annotationConfig = ProxyRuntime.INSTANCE.getConfig().getConfig(ConfigEnum.ANNOTATION);
+            annotationConfig.getAnnotations().getSchemas().stream()
+                    .filter(schema -> session.schema.getName().equals(schema.getName()))
+                    .forEach(schema -> Optional.ofNullable(schema.getMatches())
+                            .ifPresent(matches -> matches.stream().filter(match -> matchFilter(session, match))
+                                    .forEach(match -> schemaFilters.putAll(match.getFilters()))));
+        }
+
         for (Map.Entry<String, Map<String, String>> entry : schemaFilters.entrySet()) {
             SQLAnnotationCmd cmd = filterInstanceCache.get(entry.getKey());
-            // todo 匹配match
+            if (cmd == null) {
+                LOGGER.error("maybe error, please check annotations.yml");
+                continue;
+            }
             // 动态注解的filter匹配
-            chain.addCmdChain(cmd, entry.getValue());
+            chain.addCmdChain(cmd, entry.getValue(), true);
         }
+    }
+
+    private boolean matchFilter(MycatSession session, AnnotationMatchBean match) {
+        // 过滤match的filters配置为空，是为了过滤没必要的匹配
+        if (match.getFilters() == null || match.getFilters().isEmpty()) {
+            return false;
+        }
+        // 判断是否enable
+        if (!match.isEnable()) {
+            return false;
+        }
+        // 匹配sqlType
+        if (match.getSqlType().getType() != session.sqlContext.getSQLType()) {
+            return false;
+        }
+        // 匹配tables，如果tables没有配置，认为匹配
+        if (match.getTables() != null && match.getTables().size() > 0) {
+            int tableCount = session.sqlContext.getTableCount();
+            boolean tableMatch = false;
+            for (int i = 0; i < tableCount; i++) {
+                String tableName = session.sqlContext.getTableName(i);
+                if (match.getTables().contains(tableName)) {
+                    tableMatch = true;
+                    break;
+                }
+            }
+            if (!tableMatch) {
+                return false;
+            }
+        }
+        // 匹配condition
+        if (match.getConditions() != null) {
+            for (Map.Entry<AnnotationMatchBean.ConditionEnum, String> entry : match.getConditions().entrySet()) {
+                session.sqlContext.getAnnotationCondition();
+            }
+        }
+        LOGGER.debug("dynamic annotation matches for {}", match.getName());
+        return true;
     }
 }

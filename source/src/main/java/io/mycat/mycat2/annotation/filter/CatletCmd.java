@@ -41,7 +41,7 @@ public class CatletCmd extends SQLAnnotationCmd {
 		//String clazz = "io.mycat.mycat2.cmds.HBTDemoCmd2";
 		try {
 			MySQLCommand target = (MySQLCommand) ProxyRuntime.INSTANCE.getCatletLoader().getInstanceofClass(clazz);
-			super.getSQLAnnotationChain().setTarget(target);
+			super.sqlAnnoChain.setTarget(target);
 			return super.procssSQL(session);
 		} catch (Exception e) {
 			String errmsg = String.format(" cant not find %s in catlet home !", clazz);

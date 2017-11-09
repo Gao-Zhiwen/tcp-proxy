@@ -3,18 +3,22 @@ package io.mycat.mycat2.annotation;
 import io.mycat.mycat2.MySQLCommand;
 import io.mycat.mycat2.MycatSession;
 import io.mycat.mycat2.annotation.filter.SQLAnnotationCmd;
+import io.mycat.mycat2.sqlannotations.SQLAnnotation;
 import io.mycat.mycat2.sqlparser.BufferSQLContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SQLAnnotationChain {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SQLAnnotationChain.class);
     private MySQLCommand target;
 
-    /**
-     * queueMap 用于去重复
-     */
-    private Map<SQLAnnotationCmd, Map<String, String>> queueMap = new LinkedHashMap<>();
+    private List<SQLAnnotationCmd> cmdList = new ArrayList<>();
+    private List<Map<String, String>> paramList = new ArrayList<>();
 
     /**
      * queue 列表当前索引值
@@ -35,11 +39,9 @@ public class SQLAnnotationChain {
      * 2. 组装动态注解
      */
     public SQLAnnotationChain buildDynamicAnno(MycatSession session) {
-        if (!AnnotationProcessor.INSTANCE.enable) {
-            return this;
+        if (AnnotationProcessor.INSTANCE.enable) {
+            AnnotationProcessor.INSTANCE.parseFilter(session, this);
         }
-
-        AnnotationProcessor.INSTANCE.parseFilter(session, this);
         return this;
     }
 
@@ -53,12 +55,8 @@ public class SQLAnnotationChain {
     public SQLAnnotationChain buildStaticAnno(MycatSession session, Map<Byte, SQLAnnotationCmd> staticAnnontationMap) {
         BufferSQLContext context = session.sqlContext;
         SQLAnnotationCmd staticAnno = staticAnnontationMap.get(context.getAnnotationType());
-        /**
-         * 处理静态注解
-         */
-        String content = context.getAnnotationContent();
-        if (staticAnno != null && !queueMap.containsKey(staticAnno)) {
-            addCmdChain(staticAnno, null); //todo
+        if (staticAnno != null) {
+            addCmdChain(staticAnno, null, false); //todo 将null使用静态注解中的参数map替换
         }
         return this;
     }
@@ -69,7 +67,7 @@ public class SQLAnnotationChain {
      * @return
      */
     public MySQLCommand build() {
-        if (queueMap.isEmpty()) {
+        if (cmdList.isEmpty()) {
             return target;
         }
 
@@ -78,17 +76,34 @@ public class SQLAnnotationChain {
         return annoCmd;
     }
 
-    public void addCmdChain(SQLAnnotationCmd cmd, Map<String, String> param) {
+    public void addCmdChain(SQLAnnotationCmd cmd, Map<String, String> param, boolean replace) {
         cmd.setSqlAnnotationChain(this);
-        queueMap.put(cmd, param);
+        int index = cmdList.indexOf(cmd);
+        if (index == -1) {
+            // -1表示不存在该注解，则直接插入
+            cmdList.add(cmd);
+            paramList.add(param);
+        } else {
+            // 不为-1表示存在该注解，则根据是否replace去处理是否需要替换
+            if (replace) {
+                paramList.add(index, param);
+            }
+        }
     }
 
     public MySQLCommand next() {
-        if (queueMap.isEmpty() || cmdIndex >= queueMap.size()) {
+        if (cmdList.isEmpty() || cmdIndex >= cmdList.size()) {
             cmdIndex = 0;
             return target;
         }
-//        return queueMap.get(cmdIndex++);
-        return null; // todo
+        return cmdList.get(cmdIndex++);
+    }
+
+    public Map<String, String> getParam() {
+        if (cmdIndex >= paramList.size()) {
+            LOGGER.error("cmdIndex: {} is larger than paramList size: {}", cmdIndex, paramList.size());
+            return null;
+        }
+        return paramList.get(cmdIndex);
     }
 }

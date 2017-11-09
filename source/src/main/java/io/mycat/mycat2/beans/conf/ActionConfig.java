@@ -18,9 +18,4 @@ public class ActionConfig implements Configurable {
     public void setActions(ActionBean actions) {
         this.actions = actions;
     }
-
-    @Override
-    public String toString() {
-        return "ActionConfig{" + "actions=" + actions + '}';
-    }
 }

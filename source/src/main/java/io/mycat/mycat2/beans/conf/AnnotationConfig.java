@@ -18,9 +18,4 @@ public class AnnotationConfig implements Configurable {
     public void setAnnotations(AnnotationBean annotations) {
         this.annotations = annotations;
     }
-
-    @Override
-    public String toString() {
-        return "AnnotationConfig{" + "annotations=" + annotations + '}';
-    }
 }

@@ -1,10 +1,7 @@
-actions:                      # 配置动态注解全局默认参数
+actions:                        # 配置动态注解全局默认参数
   blocks:                     # block表示拦截类
-    - name: selectAllow
-      className: io.mycat.mycat2.annotation.block.SelectAllow
-      value: true             # 默认值为true，value的类型多样，一般是boolean类型，也可能是string或者int类型，如果不是boolean类型，必须指定，否则解析会出错
-    - name: deleteAllow
-      className: io.mycat.mycat2.annotation.block.DeleteAllow
+    selectAllow: io.mycat.mycat2.annotation.block.SelectAllow
+    deleteAllow: io.mycat.mycat2.annotation.block.DeleteAllow
   filters:                    # filter表示环绕类
-    - name: monitorSQL
-      className: io.mycat.mycat2.annotation.filter.MonintorSQLCmd
+    monitorSQL: io.mycat.mycat2.annotation.filter.MonintorSQLCmd
+    sqlCache: io.mycat.mycat2.annotation.filter.SQLCacheCmd

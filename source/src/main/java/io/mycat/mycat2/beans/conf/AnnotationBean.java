@@ -1,6 +1,6 @@
 package io.mycat.mycat2.beans.conf;
 
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * Desc:
@@ -10,7 +10,8 @@ import java.util.Arrays;
  */
 public class AnnotationBean {
     private boolean enable = true;
-    private AnnotationSchemaBean[] schemas;
+    private AnnotationGlobalBean global;
+    private List<AnnotationSchemaBean> schemas;
 
     public boolean isEnable() {
         return enable;
@@ -20,17 +21,19 @@ public class AnnotationBean {
         this.enable = enable;
     }
 
-    public AnnotationSchemaBean[] getSchemas() {
+    public AnnotationGlobalBean getGlobal() {
+        return global;
+    }
+
+    public void setGlobal(AnnotationGlobalBean global) {
+        this.global = global;
+    }
+
+    public List<AnnotationSchemaBean> getSchemas() {
         return schemas;
     }
 
-    public void setSchemas(AnnotationSchemaBean[] schemas) {
+    public void setSchemas(List<AnnotationSchemaBean> schemas) {
         this.schemas = schemas;
-    }
-
-    @Override
-    public String toString() {
-        return "AnnotationBean{" + "enable=" + enable + ", schemas=" + Arrays.toString(schemas)
-                + '}';
     }
 }

@@ -1,13 +1,19 @@
 annotations:                      # annotations.yml中配置的block和filter，必须在actions.yml中声明过，不然算配置错误
   enable: true                    # 表示是否支持动态注解，true表示开启，false表示关闭
+  global:
+    blocks:
+      selectAllow: true           # value的类型多样，一般是boolean类型，也可能是string或者int类型，不配置表示不进行该校验
+      deleteAllow: true
+    filters:
+      monitorSQL: {}
+      sqlCache: {cache_time: 800, access_count: 50}
   schemas:
     - name: test                  # 对应schema的名字
       enable: true                # 表示对于该schema开启动态注解
       blocks:                     # 设置schema级别的拦截类配置，不设置则使用默认值
         deleteAllow: false
       filters:                    # 设置schema级别的环绕类参数配置，不设置则使用默认值
-        - name: cacheResult
-          param: {cache_time: 1800, access_count: 70}
+        sqlCache: {cache_time: 1800, access_count: 70}
       matches:                    # 对sql做匹配
         - name: select有条件多个tables
           enable: true
@@ -17,5 +23,4 @@ annotations:                      # annotations.yml中配置的block和filter，
             OR: name = ?
           tables: [test1, test2]
           filters:                # request级别的环绕类参数配置
-            - name: cacheResult
-              param: {cache_time: 1000, access_count: 100}
+            sqlCache: {cache_time: 1000, access_count: 100}

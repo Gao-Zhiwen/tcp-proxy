@@ -1,6 +1,9 @@
 package io.mycat.mycat2.beans.conf;
 
+import io.mycat.mycat2.sqlparser.NewSQLContext;
+
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,7 +14,17 @@ import java.util.Map;
  */
 public class AnnotationMatchBean {
     public enum SqlTypeEnum {
-        SELECT, UPDATE, DELETE, INSERT;
+        SELECT(NewSQLContext.SELECT_SQL),
+        UPDATE(NewSQLContext.UPDATE_SQL),
+        DELETE(NewSQLContext.DELETE_SQL),
+        INSERT(NewSQLContext.INSERT_SQL);
+        private byte type;
+        SqlTypeEnum(byte type) {
+            this.type = type;
+        }
+        public byte getType() {
+            return type;
+        }
     }
 
     public enum ConditionEnum {
@@ -22,8 +35,8 @@ public class AnnotationMatchBean {
     private boolean enable;
     private SqlTypeEnum sqlType;
     private Map<ConditionEnum, String> conditions;
-    private String[] tables;
-    private FilterBean[] filters;
+    private List<String> tables;
+    private Map<String, Map<String, String>> filters;
 
     public String getName() {
         return name;
@@ -57,26 +70,19 @@ public class AnnotationMatchBean {
         this.conditions = conditions;
     }
 
-    public String[] getTables() {
+    public List<String> getTables() {
         return tables;
     }
 
-    public void setTables(String[] tables) {
+    public void setTables(List<String> tables) {
         this.tables = tables;
     }
 
-    public FilterBean[] getFilters() {
+    public Map<String, Map<String, String>> getFilters() {
         return filters;
     }
 
-    public void setFilters(FilterBean[] filters) {
+    public void setFilters(Map<String, Map<String, String>> filters) {
         this.filters = filters;
-    }
-
-    @Override
-    public String toString() {
-        return "AnnotationMatchBean{" + "name='" + name + '\'' + ", enable=" + enable + ", sqlType="
-                + sqlType + ", conditions=" + conditions + ", tables=" + Arrays.toString(tables)
-                + ", filters=" + Arrays.toString(filters) + '}';
     }
 }

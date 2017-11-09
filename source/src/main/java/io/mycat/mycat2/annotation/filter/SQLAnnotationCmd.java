@@ -13,14 +13,10 @@ import io.mycat.mycat2.annotation.SQLAnnotationChain;
  *
  */
 public class SQLAnnotationCmd implements MySQLCommand {
-	private SQLAnnotationChain sqlAnnoChain;
+	protected SQLAnnotationChain sqlAnnoChain;
 
 	public void setSqlAnnotationChain(SQLAnnotationChain sqlAnnoChain){
 		this.sqlAnnoChain = sqlAnnoChain;
-	}
-	
-	protected SQLAnnotationChain getSQLAnnotationChain(){
-		return sqlAnnoChain;
 	}
 
 	@Override

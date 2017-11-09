@@ -1,6 +1,6 @@
 package io.mycat.mycat2.beans.conf;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,8 +13,8 @@ public class AnnotationSchemaBean {
     private String name;
     private boolean enable = true;
     private Map<String, String> blocks;
-    private FilterBean[] filters;
-    private AnnotationMatchBean[] matches;
+    private Map<String, Map<String, String>> filters;
+    private List<AnnotationMatchBean> matches;
 
     public String getName() {
         return name;
@@ -40,26 +40,19 @@ public class AnnotationSchemaBean {
         this.blocks = blocks;
     }
 
-    public FilterBean[] getFilters() {
+    public Map<String, Map<String, String>> getFilters() {
         return filters;
     }
 
-    public void setFilters(FilterBean[] filters) {
+    public void setFilters(Map<String, Map<String, String>> filters) {
         this.filters = filters;
     }
 
-    public AnnotationMatchBean[] getMatches() {
+    public List<AnnotationMatchBean> getMatches() {
         return matches;
     }
 
-    public void setMatches(AnnotationMatchBean[] matches) {
+    public void setMatches(List<AnnotationMatchBean> matches) {
         this.matches = matches;
-    }
-
-    @Override
-    public String toString() {
-        return "AnnotationSchemaBean{" + "name='" + name + ", enable=" + enable + ", blocks="
-                + blocks + ", filters=" + Arrays.toString(filters) + ", matches="
-                + Arrays.toString(matches) + '}';
     }
 }
